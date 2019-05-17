@@ -1,4 +1,5 @@
 #Copyright 2019, Kaito Yamagishi, all rights reserved
+#Based on sheets API v4 by Google
 from __future__ import print_function
 import pickle
 import os.path
