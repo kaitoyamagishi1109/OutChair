@@ -4,8 +4,10 @@
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
 scope = ['https://spreadsheets.google.com/feeds','https://www.googleapis.com/auth/drive']
+#make sure to update this with your own json folder downloaded from the google cloud API website
 credentials = ServiceAccountCredentials.from_json_keyfile_name('OutChair-46ffa5a5c89a.json', scope)
 gc = gspread.authorize(credentials)
+#This will be the name of your spreadsheet: share this via google sheets to the given client email in your json file
 wks = gc.open('JSA_Attendance').sheet1
 
 #imports for slack API
