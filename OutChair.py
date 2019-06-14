@@ -18,14 +18,7 @@ import datetime
 timenow = datetime.datetime.now()
 date = timenow.strftime("%m" + '/' + "%d")
 
-def swipe():
-    #read swipes from users and append the attendance data to the dictionary
-    #ID input and simple error check
-    swiper_input = input("Swipe ID: ")
-    while swiper_input == '' or swiper_input[0] != ';':
-        swiper_input = input("Invalid ID. Swipe ID: ")
-    #initialize buid as 8 integers
-    buid = swiper_input[2:10]
+def swipe(buid):
     #find the users row within the spreadsheet, print name
     userrow = (wks.find(buid).row)
     print('Name: '+wks.cell(userrow, 1).value)
@@ -54,9 +47,20 @@ def write(userrow):
     wks.update_cell(userrow, datecol, 'P')
 
 if __name__ == '__main__':
-    #recieve slack username from the swipe function
-    datalist = swipe()
-    #pass the recieved slack username into the notify function 
-    notify(datalist[1])
-    #pass the users row number to the write function to append presence
-    write(datalist[0])
+    #user is able to keep swiping until ;q is called
+    while True:
+        #ID input and simple error check
+        swiper_input = input("Swipe BUID: ")
+        while swiper_input == '' or swiper_input[0] != ';':
+            swiper_input = input("Invalid. Swipe a valid BUID: ")
+        #keep swiping, to quit, type ;q
+        if swiper_input == ';q':
+            break
+        buid = swiper_input[2:10]
+        #recieve slack username from the swipe function
+        datalist = swipe(buid)
+        #pass the recieved slack username into the notify function 
+        notify(datalist[1])
+        #pass the users row number to the write function to append presence
+        write(datalist[0])
+    print('Exiting Program...')
