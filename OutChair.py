@@ -1,73 +1,62 @@
 #Copyright 2019, Kaito Yamagishi, all rights reserved
-#Based on sheets API v4 by Google
-from __future__ import print_function
-import pickle
-import os.path
-from googleapiclient.discovery import build
-from google_auth_oauthlib.flow import InstalledAppFlow
-from google.auth.transport.requests import Request
 
-# If modifying these scopes, delete the file token.pickle.
-SCOPES = ['https://www.googleapis.com/auth/spreadsheets']
+#imports for sheets API
+import gspread
+from oauth2client.service_account import ServiceAccountCredentials
+scope = ['https://spreadsheets.google.com/feeds','https://www.googleapis.com/auth/drive']
+credentials = ServiceAccountCredentials.from_json_keyfile_name('OutChair-46ffa5a5c89a.json', scope)
+gc = gspread.authorize(credentials)
+wks = gc.open('JSA_Attendance').sheet1
 
-# The ID and range of a sample spreadsheet.
-SAMPLE_SPREADSHEET_ID = '1c6lJb77s5RkQhiui4v9Nl5WPkTApTmW2Znd1FvstP1s'
-SAMPLE_RANGE_NAME = '!A:S'
+#imports for slack API
+from slackclient import SlackClient
 
-def main():
-    """Shows basic usage of the Sheets API.
-    Prints values from a sample spreadsheet.
-    """
-    creds = None
-    # The file token.pickle stores the user's access and refresh tokens, and is
-    # created automatically when the authorization flow completes for the first
-    # time.
-    if os.path.exists('token.pickle'):
-        with open('token.pickle', 'rb') as token:
-            creds = pickle.load(token)
-    # If there are no (valid) credentials available, let the user log in.
-    if not creds or not creds.valid:
-        if creds and creds.expired and creds.refresh_token:
-            creds.refresh(Request())
-        else:
-            flow = InstalledAppFlow.from_client_secrets_file(
-                'credentials.json', SCOPES)
-            creds = flow.run_local_server()
-        # Save the credentials for the next run
-        with open('token.pickle', 'wb') as token:
-            pickle.dump(creds, token)
+#other imports
+import datetime
 
-    service = build('sheets', 'v4', credentials=creds)
+#find date right now, format it the same as in spreadsheet
+timenow = datetime.datetime.now()
+date = timenow.strftime("%m" + '/' + "%d")
 
-    #OutChair functionality
-    swiper_input = raw_input("Swipe ID: ")
+def swipe():
+    #read swipes from users and append the attendance data to the dictionary
+    #ID input and simple error check
+    swiper_input = input("Swipe ID: ")
     while swiper_input == '' or swiper_input[0] != ';':
-        swiper_input = raw_input("Invalid ID. Swipe ID: ")
-    #change hardcode to 8 digits after U character
+        swiper_input = input("Invalid ID. Swipe ID: ")
+    #initialize buid as 8 integers
     buid = swiper_input[2:10]
-    date='4/3' #hardcoded date
-    mydict = dict()
+    #find the users row within the spreadsheet, print name
+    userrow = (wks.find(buid).row)
+    print('Name: '+wks.cell(userrow, 1).value)
+    #find the users slack username, return values
+    username = (wks.cell(userrow, 2).value)
+    return [userrow, username]
 
-    print("BUID: U"+buid)
 
-    # Call the Sheets API
-    sheet = service.spreadsheets()
-    result = sheet.values().get(spreadsheetId=SAMPLE_SPREADSHEET_ID,
-                                range=SAMPLE_RANGE_NAME).execute()
-    values = result.get('values', [])
+def notify(username):
+    #send a slack notification to the user
+    #input argument: username (BU email before @ e.g. kaitoy)
+    token = "xoxb-593052545734-641598667014-ZXrCx7gjRFsM4yYDffBe15Xi"
+    sc = SlackClient(token)
+    sc.api_call(
+        "chat.postMessage",
+        channel='@'+username,
+        text='You have been marked present for ' + date + '\'s meeting. Thank you for coming! :sushi:',
+        username='OutChair Attendane Bot',
+        icon_emoji=':jp:',
+        as_user='false'
+    )
 
-    if not values:
-        print('No data found.')
-    else:
-        for row in values:
-            #append BUID to name on dictionary
-            mydict[row[1]] = row[0]
-        for col in values[0]:
-            if col == date:
-                print(date)
-    #find and print the name corresponding to BUID
-    name = mydict[buid]
-    print("Name: "+name)
+def write(userrow):
+    #find todays date from the columns, and put a P for present in the users corresponding frame
+    datecol = (wks.find(date).col)
+    wks.update_cell(userrow, datecol, 'P')
 
 if __name__ == '__main__':
-    main()
+    #recieve slack username from the swipe function
+    datalist = swipe()
+    #pass the recieved slack username into the notify function 
+    notify(datalist[1])
+    #pass the users row number to the write function to append presence
+    write(datalist[0])
