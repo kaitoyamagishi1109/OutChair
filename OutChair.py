@@ -23,7 +23,7 @@ date = timenow.strftime("%m" + '/' + "%d")
 def swipe(buid):
     #find the users row within the spreadsheet, print name
     userrow = (wks.find(buid).row)
-    print('Name: '+wks.cell(userrow, 1).value)
+    print('Name: ' + wks.cell(userrow, 1).value)
     #find the users slack username, return values
     username = (wks.cell(userrow, 2).value)
     return [userrow, username]
@@ -47,6 +47,14 @@ def write(userrow):
     #find todays date from the columns, and put a P for present in the users corresponding frame
     datecol = (wks.find(date).col)
     wks.update_cell(userrow, datecol, 'P')
+    return datecol
+
+def strike(datecol):
+    #after appending everyones attendance, put strikes for people who havent showed up
+    numMember = len(wks.col_values(1))+1
+    for x in range(1,numMember):
+        if (wks.cell(x,datecol).value == ''):
+            wks.update_cell(x, datecol, 'S')
 
 if __name__ == '__main__':
     #user is able to keep swiping until ;q is called
@@ -64,5 +72,6 @@ if __name__ == '__main__':
         #pass the recieved slack username into the notify function 
         notify(datalist[1])
         #pass the users row number to the write function to append presence
-        write(datalist[0])
+        datecol = write(datalist[0])
+    strike(datecol)
     print('Exiting Program...')
