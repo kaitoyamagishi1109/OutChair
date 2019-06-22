@@ -8,7 +8,7 @@ scope = ['https://spreadsheets.google.com/feeds','https://www.googleapis.com/aut
 credentials = ServiceAccountCredentials.from_json_keyfile_name('OutChair-46ffa5a5c89a.json', scope)
 gc = gspread.authorize(credentials)
 #This will be the name of your spreadsheet: share this via google sheets to the given client email in your json file
-wks = gc.open('JSA_Attendance').sheet1
+attendance = gc.open('JSA_Attendance').sheet1
 
 #imports for slack API
 from slackclient import SlackClient
@@ -16,35 +16,36 @@ from slackclient import SlackClient
 #other imports
 import datetime
 
+
+#global variable declerations
 #find date right now, format it the same as in spreadsheet
 timenow = datetime.datetime.now()
 date = timenow.strftime("%m" + '/' + "%d")
-
 #find todays date's row from spreadsheet
-datecol = (wks.find(date).col)
+datecol = (attendance.find(date).col)
 
 def excused():
     #marks some absenst students excused from absense form/spreadsheet
-    wks2 = gc.open('AbsenceForm_Responses').sheet1
+    absform = gc.open('AbsenceForm_Responses').sheet1
     #find every user absent for todays meeting
-    numabsense = wks2.findall(date)
+    numabsense = absform.findall(date)
     #for loop through all those user
     for user in range(0, len(numabsense)):
         row = (numabsense[user].row)
-        email = wks2.cell(row,2).value
+        email = absform.cell(row,2).value
         #split email by delimiter and recieve username
         username = email.split("@")[0]
-        userrow = (wks.find(username).row)
+        userrow = (attendance.find(username).row)
         #update cell with E for excused
-        wks.update_cell(userrow, datecol, 'E')
+        attendance.update_cell(userrow, datecol, 'E')
         
 
 def swipe(buid):
     #find the users row within the spreadsheet, print name
-    userrow = (wks.find(buid).row)
-    print(wks.cell(userrow, 1).value + " was marked present.")
+    userrow = (attendance.find(buid).row)
+    print(attendance.cell(userrow, 1).value + " was marked present.")
     #find the users slack username, return values
-    username = (wks.cell(userrow, 2).value)
+    username = (attendance.cell(userrow, 2).value)
     return [userrow, username]
 
 
@@ -59,21 +60,21 @@ def notify(username):
         text='You have been marked present for ' + date + '\'s meeting. Thank you for coming! :sushi:',
         username='OutChair Attendane Bot',
         icon_emoji=':jp:',
-        as_user='false'
-    )
+        as_user='false')
 
 
 def write(userrow):
     #find todays date from the columns, and put a P for present in the users corresponding frame
-    wks.update_cell(userrow, datecol, 'P')
+    attendance.update_cell(userrow, datecol, 'P')
 
 
 def strike():
     #after appending everyones attendance, put strikes for people who havent showed up
-    numMember = len(wks.col_values(1))+1
+    numMember = len(attendance.col_values(1))+1
+    #due to google sheets 1 start counting system of cells, numMember needs an increment
     for user in range(1,numMember):
-        if (wks.cell(user, datecol).value == ''):
-            wks.update_cell(user, datecol, 'S')
+        if (attendance.cell(user, datecol).value == ''):
+            attendance.update_cell(user, datecol, 'S')
 
 
 if __name__ == '__main__':
