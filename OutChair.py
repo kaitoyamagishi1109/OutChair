@@ -20,10 +20,27 @@ import datetime
 timenow = datetime.datetime.now()
 date = timenow.strftime("%m" + '/' + "%d")
 
+def excused():
+    #marks some absenst students excused from absense form/spreadsheet
+    wks2 = gc.open('AbsenceForm_Responses').sheet1
+    #find every user absent for todays meeting
+    numabsense = wks2.findall(date)
+    #for loop through all those user
+    for user in range(0, len(numabsense)):
+        row = (numabsense[user].row)
+        email = wks2.cell(row,2).value
+        #split email by delimiter and recieve username
+        username = email.split("@")[0]
+        userrow = (wks.find(username).row)
+        datecol = (wks.find(date).col)
+        #update cell with E for excused
+        wks.update_cell(userrow, datecol, 'E')
+        
+
 def swipe(buid):
     #find the users row within the spreadsheet, print name
     userrow = (wks.find(buid).row)
-    print('Name: ' + wks.cell(userrow, 1).value)
+    print(wks.cell(userrow, 1).value + " was marked present.")
     #find the users slack username, return values
     username = (wks.cell(userrow, 2).value)
     return [userrow, username]
@@ -43,21 +60,25 @@ def notify(username):
         as_user='false'
     )
 
+
 def write(userrow):
     #find todays date from the columns, and put a P for present in the users corresponding frame
     datecol = (wks.find(date).col)
     wks.update_cell(userrow, datecol, 'P')
     return datecol
 
+
 def strike(datecol):
     #after appending everyones attendance, put strikes for people who havent showed up
     numMember = len(wks.col_values(1))+1
-    for x in range(1,numMember):
-        if (wks.cell(x,datecol).value == ''):
-            wks.update_cell(x, datecol, 'S')
+    for user in range(1,numMember):
+        if (wks.cell(user, datecol).value == ''):
+            wks.update_cell(user, datecol, 'S')
+
 
 if __name__ == '__main__':
     #user is able to keep swiping until ;q is called
+    excused()
     while True:
         #ID input and simple error check
         swiper_input = input("Swipe BUID: ")
