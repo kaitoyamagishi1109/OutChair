@@ -20,6 +20,9 @@ import datetime
 timenow = datetime.datetime.now()
 date = timenow.strftime("%m" + '/' + "%d")
 
+#find todays date's row from spreadsheet
+datecol = (wks.find(date).col)
+
 def excused():
     #marks some absenst students excused from absense form/spreadsheet
     wks2 = gc.open('AbsenceForm_Responses').sheet1
@@ -32,7 +35,6 @@ def excused():
         #split email by delimiter and recieve username
         username = email.split("@")[0]
         userrow = (wks.find(username).row)
-        datecol = (wks.find(date).col)
         #update cell with E for excused
         wks.update_cell(userrow, datecol, 'E')
         
@@ -63,12 +65,10 @@ def notify(username):
 
 def write(userrow):
     #find todays date from the columns, and put a P for present in the users corresponding frame
-    datecol = (wks.find(date).col)
     wks.update_cell(userrow, datecol, 'P')
-    return datecol
 
 
-def strike(datecol):
+def strike():
     #after appending everyones attendance, put strikes for people who havent showed up
     numMember = len(wks.col_values(1))+1
     for user in range(1,numMember):
@@ -93,6 +93,6 @@ if __name__ == '__main__':
         #pass the recieved slack username into the notify function 
         notify(datalist[1])
         #pass the users row number to the write function to append presence
-        datecol = write(datalist[0])
-    strike(datecol)
+        write(datalist[0])
+    strike()
     print('Exiting Program...')
