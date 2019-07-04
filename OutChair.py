@@ -1,11 +1,16 @@
 #Copyright 2019, Kaito Yamagishi, all rights reserved
 
+#import credentials
+import configparser
+dat = configparser.ConfigParser()
+dat.read('credentials.dat')
+
 #imports for sheets API
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
 scope = ['https://spreadsheets.google.com/feeds','https://www.googleapis.com/auth/drive']
 #make sure to update this with your own json folder downloaded from the google cloud API website
-credentials = ServiceAccountCredentials.from_json_keyfile_name('OutChair-46ffa5a5c89a.json', scope)
+credentials = ServiceAccountCredentials.from_json_keyfile_name(dat['credentials']['sheets_json_name'], scope)
 gc = gspread.authorize(credentials)
 #This will be the name of your spreadsheet: share this via google sheets to the given client email in your json file
 attendance = gc.open('JSA_Attendance').sheet1
@@ -13,9 +18,8 @@ attendance = gc.open('JSA_Attendance').sheet1
 #imports for slack API
 from slackclient import SlackClient
 
-#other imports
+#import for todays date
 import datetime
-
 
 #global variable declerations
 #find date right now, format it the same as in spreadsheet
@@ -52,7 +56,7 @@ def swipe(buid):
 def notify(username):
     #send a slack notification to the user
     #input argument: username (BU email before @ e.g. kaitoy)
-    token = "xoxb-593052545734-641598667014-ZXrCx7gjRFsM4yYDffBe15Xi"
+    token = dat['credentials']['slack_api_key']
     sc = SlackClient(token)
     sc.api_call(
         "chat.postMessage",
