@@ -12,7 +12,7 @@ After operating with the OutChair program for a semester with my student organiz
 3. Swiper operation is hardware-dependent, so people swipe the wrong way, forgets their student ID, etc. : This lead to some of the attendances to be manually entered every meeting
 
 Because I was so focused on the "swiper" aspect and making the hardware-software sync work, I didn't see some integral frauds related to the format of this application. Therefore, I am going to make some drastic changes to this program, including but not limited to:
-1. A GitHub pages based web application
+1. A GitHub pages based web application (JavaScript backend)
 2. Google Sign-In widget for user identification
 3. Simple and more efficient way to sign-in to meetings
 
