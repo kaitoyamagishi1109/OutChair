@@ -5,6 +5,7 @@ Copywrite 2019, Kaito Yamagishi, all rights reserved
 
 ## Updated Documentation as of January 2020:
 *Version 2.0.0*
+
 After operating with the OutChair program for a semester with my student organization, various problems with the app surfaced:
 1. Other users cannot operate the app because of its dependency on multiple python libraries (No packaging was done)
 2. Since there is only one swiper, the swipe-in attendance process is very inefficient
@@ -19,6 +20,7 @@ I hope that these changes can not only create a more efficient system for the or
 
 ## Original Documentation as of July 2019:
 *Version 1.0.0*
+
 This is an attendance software which has features corresponding to the google sheets API and the slack API.
 Specifically, you can use a USB card swiper in order to fill in their attendance status to a google spreadsheet,
 and to notify them via a slack API bot. Although many parts are hardcoded such as the swiper input and the slack API bot settings,
