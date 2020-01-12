@@ -1,7 +1,15 @@
 <html>
   <head>
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="google-signin-client_id" content=config.CLIENT_ID>
+    <!-- Invoke the Google Platform Library -->
+    <script src="https://apis.google.com/js/platform.js" async defer></script>
     <style>
+      div {
+        margin: auto;
+        margin-top: 5%;
+        max-width: 1000px;
+      }
       img {
         display: block;
         margin-left: auto;
@@ -10,7 +18,15 @@
     </style>
   </head>
   <body>
+    <!-- Invoke JS file for functionality -->
+    <script type='text/javascript' src="config.js"></script>
+    <script type='text/javascript' src="OutChair.js"></script>
+
+
     <!-- Header - Title Image -->
-    <img src="syussekibo.png" alt="Title" style="width:70%;">
+    <div>
+      <img src="syussekibo.png" alt="Title" style="width:70%;">
+    </div>
+    <div class="g-signin2" data-onsuccess="onSignIn" data-theme="dark"></div>
   </body>
 </html>
