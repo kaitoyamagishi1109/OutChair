@@ -1,22 +1,23 @@
 <html>
   <head>
-    <!-- Invoke JS file for functionality -->
+    <!-- Invoke JS files and library for functionality -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://apis.google.com/js/platform.js?onload=init" async defer></script>
     <script type='text/javascript' src="config.js"></script>
     <script type='text/javascript' src="OutChair.js"></script>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="google-signin-client_id" content=config.OAUTH_CLIENT_ID>
-    <!-- Invoke the Google Platform Library -->
-    <script src="https://apis.google.com/js/platform.js" async defer></script>
     <style>
       div {
-        margin: auto;
-        margin-top: 5%;
         max-width: 1000px;
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
       }
       img {
         display: block;
         margin-left: auto;
         margin-right: auto;
+        margin-top: 5%;
+        padding-bottom: 50px;
       }
     </style>
   </head>
@@ -25,6 +26,7 @@
     <div>
       <img src="syussekibo.png" alt="Title" style="width:70%;">
     </div>
-    <div class="g-signin2" data-onsuccess="onSignIn"></div>
+    <!-- <div class="g-signin2" data-onsuccess="onSignIn"></div> -->
+    <div id="GoogleButton"></div>
   </body>
 </html>
