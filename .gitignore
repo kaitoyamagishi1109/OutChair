@@ -1,1 +1,5 @@
 config.js
+.DS_Store
+_site/
+Gemfile
+Gemfile.lock
