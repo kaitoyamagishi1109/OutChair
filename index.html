@@ -1,14 +1,19 @@
 <html lang="en">
   <head>
-    <!-- Firebase UI -->
+    <style>
+      h1 {
+        text-align: center;
+        font-family: Arial, Helvetica, sans-serif;
+      }
+    </style>
+
+    <!-- Necessary imports for firebase -->
     <script src="https://cdn.firebase.com/libs/firebaseui/3.5.2/firebaseui.js"></script>
     <link type="text/css" rel="stylesheet" href="https://cdn.firebase.com/libs/firebaseui/3.5.2/firebaseui.css" />
-    <!-- The core Firebase JS SDK is always required and must be listed first -->
     <script src="https://www.gstatic.com/firebasejs/7.19.1/firebase-app.js"></script>
-    <!-- TODO: Add SDKs for Firebase products that you want to use !-->
     <script src="https://www.gstatic.com/firebasejs/7.19.1/firebase-auth.js"></script>
     <script>
-      // Your web app's Firebase configuration
+      // Out web app's Firebase configuration
       var firebaseConfig = {
         apiKey: "AIzaSyByjg2Q-nCOmmF21_5hsS-HUZs8eBfpJ50",
         authDomain: "ec463-miniproject-79706.firebaseapp.com",
@@ -25,10 +30,11 @@
   </head>
 
   <body>
-    <h1>EC463 MiniProject</h1>
+    <h1>EC463 Mini Project</h1>
     <div id="firebaseui-auth-container"></div>
     <div id="loader">Loading...</div>
 
+    <!-- Settings for the firebase UI; Starts UI at bottom -->
     <script>
       var uiConfig = {
         callbacks: {
@@ -46,7 +52,7 @@
         },
         // Will use popup for IDP Providers sign-in flow instead of the default, redirect.
         signInFlow: 'popup',
-        signInSuccessUrl: '<url-to-redirect-to-on-success>',
+        signInSuccessUrl: '<kaitoyamagishi1109.github.io/OutChair/dashboard.html>',
         signInOptions: [
           // Leave the lines as is for the providers you want to offer your users.
           firebase.auth.GoogleAuthProvider.PROVIDER_ID,
