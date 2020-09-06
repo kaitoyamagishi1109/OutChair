@@ -3,16 +3,10 @@
     <!-- Firebase UI -->
     <script src="https://cdn.firebase.com/libs/firebaseui/3.5.2/firebaseui.js"></script>
     <link type="text/css" rel="stylesheet" href="https://cdn.firebase.com/libs/firebaseui/3.5.2/firebaseui.css" />
-  </head>
-  <body>
-    <p>This is an example of a simple HTML page with one paragraph.</p>
-
     <!-- The core Firebase JS SDK is always required and must be listed first -->
     <script src="https://www.gstatic.com/firebasejs/7.19.1/firebase-app.js"></script>
-    <!-- TODO: Add SDKs for Firebase products that you want to use
-        https://firebase.google.com/docs/web/setup#available-libraries -->
+    <!-- TODO: Add SDKs for Firebase products that you want to use !-->
     <script src="https://www.gstatic.com/firebasejs/7.19.1/firebase-auth.js"></script>
-
     <script>
       // Your web app's Firebase configuration
       var firebaseConfig = {
@@ -26,20 +20,42 @@
       };
       // Initialize Firebase
       firebase.initializeApp(firebaseConfig);
+      var ui = new firebaseui.auth.AuthUI(firebase.auth());
     </script>
+  </head>
 
+  <body>
+    <h1>EC463 MiniProject</h1>
     <div id="firebaseui-auth-container"></div>
+    <div id="loader">Loading...</div>
 
     <script>
-      var ui = new firebaseui.auth.AuthUI(firebase.auth());
+      var uiConfig = {
+        callbacks: {
+          signInSuccessWithAuthResult: function(authResult, redirectUrl) {
+            // User successfully signed in.
+            // Return type determines whether we continue the redirect automatically
+            // or whether we leave that to developer to handle.
+            return true;
+          },
+          uiShown: function() {
+            // The widget is rendered.
+            // Hide the loader.
+            document.getElementById('loader').style.display = 'none';
+          }
+        },
+        // Will use popup for IDP Providers sign-in flow instead of the default, redirect.
+        signInFlow: 'popup',
+        signInSuccessUrl: '<url-to-redirect-to-on-success>',
+        signInOptions: [
+          // Leave the lines as is for the providers you want to offer your users.
+          firebase.auth.GoogleAuthProvider.PROVIDER_ID,
+          firebase.auth.FacebookAuthProvider.PROVIDER_ID,
+        ]
+      };  
 
-      ui.start('#firebaseui-auth-container', {
-      signInOptions: [
-        // List of OAuth providers supported.
-        firebase.auth.GoogleAuthProvider.PROVIDER_ID
-      ]
-      // Other config options...
-      });
+      // The start method will wait until the DOM is loaded.
+      ui.start('#firebaseui-auth-container', uiConfig);
     </script>
   </body>
 </html>
