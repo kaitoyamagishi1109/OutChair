@@ -28,6 +28,8 @@
       };
       // Initialize Firebase
       firebase.initializeApp(firebaseConfig);
+
+      var ui = new firebaseui.auth.AuthUI(firebase.auth());
     </script>
   </body>
 </html>
